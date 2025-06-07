@@ -1,0 +1,24 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.db
+*.db-shm
+*.db-wal
+
+# ASP.NET Identity secret config
+appsettings.Development.json
+appsettings.Local.json
+
+# Rider/VSCode/Visual Studio
+.vscode/
+.idea/
+.vs/
+
+# macOS system files
+.DS_Store
+
+# Node/Vue 
+client/node_modules/
+client/dist/
