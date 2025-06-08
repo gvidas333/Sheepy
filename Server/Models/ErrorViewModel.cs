@@ -1,4 +1,4 @@
-namespace Sheepy.Models;
+namespace Server.Models;
 
 public class ErrorViewModel
 {

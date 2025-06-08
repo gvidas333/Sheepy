@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Server.Models;
 
-namespace Sheepy.Data;
+namespace Server.Data;
 
 public class ApplicationDbContext : IdentityDbContext
 {
@@ -9,4 +10,8 @@ public class ApplicationDbContext : IdentityDbContext
         : base(options)
     {
     }
+    
+    public DbSet<Product> Products { get; set; }
+    public DbSet<Meal> Meals { get; set; }
+    public DbSet<User> Users { get; set; }
 }
