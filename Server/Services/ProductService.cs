@@ -38,7 +38,7 @@ public class ProductService : IProductService
     {
         var existingProduct = await _productRepository.GetByIdAsync(productUpdateDto.Id, userId);
         
-        if (existingProduct == null)
+        if (existingProduct is null)
         {
             return false;
         }
@@ -51,7 +51,7 @@ public class ProductService : IProductService
     {
         var productToDelete = await _productRepository.GetByIdAsync(productId, userId);
 
-        if (productToDelete == null)
+        if (productToDelete is null)
         {
             return false;
         }

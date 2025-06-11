@@ -21,8 +21,8 @@ Follow these instructions to get the project running on your local machine.
 ### 1. Clone the Repository
 
 ```bash
-git clone [Your GitHub Repository URL]
-cd [Your Project Folder]
+git clone https://github.com/gvidas333/Sheepy.git
+cd Sheepy
 ```
 
 ### 2. Run the Backend Environment
