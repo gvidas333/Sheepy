@@ -17,5 +17,10 @@ public class CategoryTypeEntityConfiguration : IEntityTypeConfiguration<Category
         builder.HasMany(x => x.Products)
             .WithOne(p => p.CategoryType)
             .HasForeignKey(p => p.CategoryTypeId);
+
+        builder.HasData(
+            new CategoryType { Id = Guid.Parse("ED80C4F6-D657-4ED4-854B-5254A7448A4E"), Name = "Duona" },
+            new CategoryType { Id = Guid.Parse("0C8E9981-434B-4D39-A23F-26E2D1A4A49C"), Name = "Vaisiai ir Darzoves" }
+        );
     }
 }
