@@ -26,7 +26,7 @@ public class ProductRepository : IProductRepository
             .FirstOrDefaultAsync(p => p.Id == productId && p.UserId == userId);
     }
 
-    public async Task<IEnumerable<Product>> GetAllByUserAsync(Guid userId)
+    public async Task<IEnumerable<Product>> GetProductsByUserAsync(Guid userId)
     {
         return await _context.Products
             .Where(p => p.UserId == userId)
