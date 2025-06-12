@@ -23,6 +23,7 @@ public class ProductRepository : IProductRepository
     public async Task<Product?> GetByIdAsync(Guid productId, Guid userId)
     {
         return await _context.Products
+            .Include((p => p.CategoryType))   
             .FirstOrDefaultAsync(p => p.Id == productId && p.UserId == userId);
     }
 

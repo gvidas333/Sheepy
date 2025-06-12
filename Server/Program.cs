@@ -27,9 +27,11 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryTypeRepository, CategoryTypeRepository>();
+builder.Services.AddScoped<IMealRepository, MealRepository>();
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryTypeService, CategoryTypeService>();
+builder.Services.AddScoped<IMealService, MealService>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");

@@ -53,7 +53,7 @@ public class CategoryTypesController : ControllerBase
     public async Task<IActionResult> GetCategoryTypes()
     {
         var userId = GetCurrentUserId();
-        var categories = _categoryTypeService.GetCategoryTypesForUserAsync(userId);
+        var categories = await _categoryTypeService.GetCategoryTypesForUserAsync(userId);
         return Ok(categories);
     }
 
