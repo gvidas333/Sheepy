@@ -3,7 +3,7 @@ using Server.Data;
 using Server.Repositories.Interfaces;
 using Server.Models;
 
-namespace server.Repositories;
+namespace Server.Repositories;
 
 public class ProductRepository : IProductRepository
 {

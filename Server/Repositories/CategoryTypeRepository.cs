@@ -3,7 +3,7 @@ using Server.Data;
 using Server.Models;
 using Server.Repositories.Interfaces;
 
-namespace server.Repositories;
+namespace Server.Repositories;
 
 public class CategoryTypeRepository : ICategoryTypeRepository
 {
