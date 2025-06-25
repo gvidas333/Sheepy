@@ -2,102 +2,48 @@
   import { ref } from 'vue';
   import axios from 'axios';
   import { useRouter } from 'vue-router';
-
+  import { useToast } from 'primevue/usetoast';
+  import AuthLayout from '@/layouts/AuthLayout.vue';
   import Button from 'primevue/button';
   import InputText from 'primevue/inputtext';
 
   const email = ref('');
   const password = ref('');
   const router = useRouter();
+  const toast = useToast();
 
   async function handleRegister()
   {
     try {
-      const response = await axios.post('https://localhost:7021/api/auth/register', {
+      await axios.post('https://localhost:7021/api/auth/register', {
         email: email.value,
         password: password.value
       });
-
-      alert('Prisiregistruoti pavyko! Dabar gali prisijungti');
+      toast.add({ severity: 'success', summary: 'Success', detail: 'Registration successful! You can now log in.', life: 3000 });
       router.push('/login');
     } catch (error) {
-      alert('Prisiregistruoti nepavyko :(');
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Registration failed!', life: 3000 });
     }
   }
 </script>
 
 <template>
-  <div class="page-wrapper">
-    <nav class="auth-nav">
-      <RouterLink to="/login" class="nav-link">Login</RouterLink>
-      <span>|</span>
-      <RouterLink to="/register" class="nav-link">Register</RouterLink>
-    </nav>
-
-    <div class="auth-container">
-      <div class="card">
-        <h1 class="title">Register</h1>
-
-        <form @submit.prevent="handleRegister" class="form-grid">
-          <div class="form-group">
-            <label for="email">Email</label>
-            <InputText type="email" id="email" v-model="email"/>
-          </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <InputText type="password" id="password" v-model="password"/>
-          </div>
-          <Button label="Register" type="submit" icon="pi pi-sign-in" />
-        </form>
+  <AuthLayout title="Register">
+    <form @submit.prevent="handleRegister" class="form-grid">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <InputText type="email" id="email" v-model="email"/>
       </div>
-    </div>
-  </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <InputText type="password" id="password" v-model="password"/>
+      </div>
+      <Button label="Register" type="submit" icon="pi pi-user-plus" />
+    </form>
+  </AuthLayout>
 </template>
 
 <style scoped>
-.page-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding-bottom: 20vh;
-  min-height: 100vh;
-}
-
-.auth-nav {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  font-size: 1.1rem;
-  color: #ccc;
-}
-
-.nav-link:hover {
-  text-decoration: underline;
-}
-
-.auth-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-.card {
-  width: 100%;
-  max-width: 400px;
-  padding: 2rem;
-  background-color: #1e1e1e;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.title {
-  text-align: center;
-  color: white;
-  margin-bottom: 1.5rem;
-}
-
 .form-grid {
   display: grid;
   gap: 1.5rem;
