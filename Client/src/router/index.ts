@@ -3,6 +3,7 @@ import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import MealsView from '../views/MealsView.vue'
 import AddMealView from '../views/AddMealView.vue'
+import CategoriesView from '../views/CategoriesView.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
@@ -34,13 +35,12 @@ const router = createRouter({
     //   component: () => import('../views/ProductsView.vue'),
     //   meta: { requiresAuth: true }
     // },
-    // {
-    //   path: '/categories',
-    //   name: 'categories',
-    //   // You will need to create this Vue component file later
-    //   component: () => import('../views/CategoriesView.vue'),
-    //   meta: { requiresAuth: true }
-    // },
+    {
+      path: '/categories',
+      name: 'categories',
+      component: CategoriesView,
+      meta: { requiresAuth: true }
+    },
     // {
     //   path: '/shopping-list',
     //   name: 'shopping-list',

@@ -6,7 +6,6 @@ import { useMealsStore, type Meal } from '@/stores/meals';
 import { useShoppingListStore } from '@/stores/shoppingList';
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from 'primevue/usetoast';
-import axios from 'axios';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import Chip from 'primevue/chip';
@@ -95,8 +94,9 @@ function confirmDelete(meal: Meal) {
     message: 'Are you sure you want to delete this meal?',
     header: 'Delete Confirmation',
     icon: 'pi pi-exclamation-triangle',
-    rejectClass: 'p-button-danger',
-    acceptLabel: 'Yes, delete it',
+    acceptClass: 'p-button-danger',
+    rejectClass: 'p-button-text',
+    acceptLabel: 'Delete',
     rejectLabel: 'Cancel',
     accept: async () => {
       try {
