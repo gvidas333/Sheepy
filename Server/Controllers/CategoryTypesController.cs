@@ -36,10 +36,10 @@ public class CategoryTypesController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetCategoryTypeById(Guid categoryTypeId)
+    public async Task<IActionResult> GetCategoryTypeById(Guid id)
     {
         var userId = GetCurrentUserId();
-        var category = await _categoryTypeService.GetCategoryTypeByIdAsync(categoryTypeId, userId);
+        var category = await _categoryTypeService.GetCategoryTypeByIdAsync(id, userId);
 
         if (category == null)
         {
@@ -58,10 +58,10 @@ public class CategoryTypesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteCategoryType(Guid categoryTypeId)
+    public async Task<IActionResult> DeleteCategoryType(Guid id)
     {
         var userId = GetCurrentUserId();
-        var success = await _categoryTypeService.DeleteCategoryTypeAsync(categoryTypeId, userId);
+        var success = await _categoryTypeService.DeleteCategoryTypeAsync(id, userId);
 
         if (!success)
         {

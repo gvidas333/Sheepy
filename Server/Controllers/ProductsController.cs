@@ -58,9 +58,9 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateProduct(Guid productToUpdateId, [FromBody] ProductUpdateDto productUpdateDto)
+    public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] ProductUpdateDto productUpdateDto)
     {
-        if (productToUpdateId != productUpdateDto.Id)
+        if (id != productUpdateDto.Id)
         {
             return BadRequest("Id mismatch between route and body");
         }
@@ -81,11 +81,11 @@ public class ProductsController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> DeleteProduct(Guid productId)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteProduct(Guid id)
     {
         var userId = GetCurrentUserId();
-        var success = await _productService.DeleteProductAsync(productId, userId);
+        var success = await _productService.DeleteProductAsync(id, userId);
 
         if (!success)
         {
