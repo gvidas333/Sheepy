@@ -128,6 +128,12 @@ public class ShoppingListService : IShoppingListService
         return shoppingLists.ToDto();
     }
 
+    public async Task<ShoppingListDto?> GetLatestForUserAsync(Guid userId)
+    {
+        var shoppingList = await _shoppingListRepository.GetLatestForUserAsync(userId);
+        return shoppingList?.ToDto();
+    }
+
     public async Task<bool> DeleteAsync(Guid id, Guid userId)
     {
         var listToDelete = await _shoppingListRepository.GetByIdAsync(id, userId);

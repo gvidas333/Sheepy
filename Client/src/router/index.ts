@@ -4,6 +4,8 @@ import RegisterView from '../views/RegisterView.vue'
 import MealsView from '../views/MealsView.vue'
 import AddMealView from '../views/AddMealView.vue'
 import CategoriesView from '../views/CategoriesView.vue'
+import ProductsView from '../views/ProductsView.vue'
+import ShoppingListView from '../views/ShoppingListView.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
@@ -29,25 +31,24 @@ const router = createRouter({
       component: MealsView,
       meta: { requiresAuth: true}
     },
-    // {
-    //   path: 'products',
-    //   name: 'products',
-    //   component: () => import('../views/ProductsView.vue'),
-    //   meta: { requiresAuth: true }
-    // },
+    {
+      path: '/products',
+      name: 'products',
+      component: ProductsView,
+      meta: { requiresAuth: true }
+    },
     {
       path: '/categories',
       name: 'categories',
       component: CategoriesView,
       meta: { requiresAuth: true }
     },
-    // {
-    //   path: '/shopping-list',
-    //   name: 'shopping-list',
-    //   // You will need to create this Vue component file later
-    //   component: () => import('../views/ShoppingListView.vue'),
-    //   meta: { requiresAuth: true }
-    // },
+    {
+      path: '/shopping-list',
+      name: 'shopping-list',
+      component: ShoppingListView,
+      meta: { requiresAuth: true }
+    },
     {
       path: '/meals/new',
       name: 'add-meal',

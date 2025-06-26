@@ -22,7 +22,7 @@ public class ShoppingListsController : ControllerBase
     }
 
     [HttpPost("generate")]
-    public async Task<IActionResult> GenereateShoppingList([FromBody] GenerateShoppingListDto generateDto)
+    public async Task<IActionResult> GenerateShoppingList([FromBody] GenerateShoppingListDto generateDto)
     {
         if (!ModelState.IsValid)
         {
@@ -55,6 +55,20 @@ public class ShoppingListsController : ControllerBase
         var userId = GetCurrentUserId();
         var lists = await _shoppingListService.GetAllForUserAsync(userId);
         return Ok(lists);
+    }
+
+    [HttpGet("latest")]
+    public async Task<IActionResult> GetLatestShoppingList()
+    {
+        var userId = GetCurrentUserId();
+        var list = await _shoppingListService.GetLatestForUserAsync(userId);
+
+        if (list == null)
+        {
+            return NotFound("No shopping lists found for this user.");
+        }
+
+        return Ok(list);
     }
 
     [HttpDelete("{id}")]
