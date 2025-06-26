@@ -21,23 +21,8 @@ const toast = useToast();
 const cardMenu = ref();
 const mainMenu = ref();
 
-const selectedMealIds = ref<string[]>([]);
-
 async function handleGenerateList() {
-  toast.add({ severity: 'info', summary: 'Generating', detail: 'Preparing your list...', life: 2000 });
-
-  try {
-    await shoppingListStore.generateList(selectedMealIds.value);
-    toast.add({ severity: 'success', summary: 'Success', detail: 'List generated!', life: 3000 });
-  } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to generate list.', life: 3000 });
-  }
-}
-function toggleMealSelection(mealId: string) {
-  const index = selectedMealIds.value.indexOf(mealId);
-  if (index > -1) {
-    selectedMealIds.value.splice(index, 1);
-  } else selectedMealIds.value.push(mealId);
+  await shoppingListStore.generateList();
 }
 
 const selectedMeal = ref<Meal | null>(null);
@@ -101,9 +86,8 @@ function confirmDelete(meal: Meal) {
     accept: async () => {
       try {
         await mealsStore.deleteMeal(meal.id);
-        toast.add({ severity: 'success', summary: 'Success', detail: 'Meal deleted!', life: 3000 });
       } catch (error) {
-        toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete meal.', life: 3000 });
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete meal.', life: 1000 });
       }
     },
   });
@@ -142,8 +126,8 @@ function goToAddMealPage() {
           v-for="meal in mealsStore.meals"
           :key="meal.id"
           class="meal-card-wrapper"
-          :class="{ 'selected': selectedMealIds.includes(meal.id) }"
-          @click="toggleMealSelection(meal.id)"
+          :class="{ 'selected': shoppingListStore.selectedMealIds.includes(meal.id) }"
+          @click="shoppingListStore.toggleMealSelection(meal.id)"
         >
           <Button
             icon="pi pi-ellipsis-h"
@@ -167,12 +151,10 @@ function goToAddMealPage() {
       </div>
     </main>
 
-    <div v-if="selectedMealIds.length > 0" class="fixed-action-bar">
+    <div v-if="shoppingListStore.hasSelection" class="fixed-action-bar">
       <Button
         label="Generate List"
-        @click="handleGenerateList"
-        severity="secondary"
-        class="generate-button"
+        @click="shoppingListStore.generateList()"
       />
     </div>
   </div>
@@ -227,6 +209,10 @@ function goToAddMealPage() {
 
 .meal-card-wrapper.selected {
   border-color: #356655;
+}
+
+.meal-card-wrapper.selected :deep(.p-card) {
+  background-color: #2a2a2a;
 }
 
 .meal-menu-button {

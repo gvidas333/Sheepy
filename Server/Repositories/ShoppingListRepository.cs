@@ -36,6 +36,14 @@ public class ShoppingListRepository :  IShoppingListRepository
             .ToListAsync();
     }
 
+    public async Task<ShoppingList?> GetLatestForUserAsync(Guid userId)
+    {
+        return await _context.ShoppingLists
+            .Where(sl => sl.UserId == userId)
+            .OrderByDescending(sl => sl.CreatedAt)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task DeleteAsync(ShoppingList shoppingList)
     {
         _context.ShoppingLists.Remove(shoppingList);
