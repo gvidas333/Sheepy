@@ -5,11 +5,18 @@
 namespace server.Migrations
 {
     /// <inheritdoc />
-    public partial class UserCategoryOrderPreference : Migration
+    public partial class AddMealNamesAndCategoryPreference : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<string>(
+                name: "MealNames",
+                table: "ShoppingLists",
+                type: "jsonb",
+                nullable: false,
+                defaultValue: "[]");
+
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
                 table: "AspNetUserTokens",
@@ -33,7 +40,7 @@ namespace server.Migrations
                 table: "AspNetUsers",
                 type: "jsonb",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: "[]");
 
             migrationBuilder.AlterColumn<string>(
                 name: "ProviderKey",
@@ -57,6 +64,10 @@ namespace server.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "MealNames",
+                table: "ShoppingLists");
+
             migrationBuilder.DropColumn(
                 name: "CategoryOrder",
                 table: "AspNetUsers");

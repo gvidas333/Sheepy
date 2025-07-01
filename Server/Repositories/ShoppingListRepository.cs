@@ -42,6 +42,9 @@ public class ShoppingListRepository :  IShoppingListRepository
         return await _context.ShoppingLists
             .Where(sl => sl.UserId == userId)
             .OrderByDescending(sl => sl.CreatedAt)
+            .Include(sl => sl.ShoppingListItems)
+                .ThenInclude(item => item.Product)
+                    .ThenInclude(p => p.CategoryType)
             .FirstOrDefaultAsync();
     }
 

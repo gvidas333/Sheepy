@@ -12,8 +12,8 @@ using Server.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250701125836_UserCategoryOrderPreference")]
-    partial class UserCategoryOrderPreference
+    [Migration("20250701170628_AddMealNamesAndCategoryPreference")]
+    partial class AddMealNamesAndCategoryPreference
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -328,6 +328,10 @@ namespace server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
+
+                    b.Property<string>("MealNames")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
 
                     b.Property<string>("Name")
                         .IsRequired()
