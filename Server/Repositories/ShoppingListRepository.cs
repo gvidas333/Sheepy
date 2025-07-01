@@ -25,6 +25,7 @@ public class ShoppingListRepository :  IShoppingListRepository
         return await _context.ShoppingLists
             .Include(sl => sl.ShoppingListItems)
                 .ThenInclude(item => item.Product)
+                    .ThenInclude(p => p.CategoryType)
             .FirstOrDefaultAsync(sl => sl.Id == shoppingListId && sl.UserId == userId);
     }
 

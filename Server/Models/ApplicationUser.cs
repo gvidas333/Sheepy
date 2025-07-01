@@ -8,4 +8,5 @@ public class ApplicationUser : IdentityUser<Guid>
     public ICollection<Meal> Meals { get; set; }
     public ICollection<ShoppingList> ShoppingLists { get; set; }
     public ICollection<CategoryType> CategoryTypes { get; set; }
+    public List<string> CategoryOrder { get; set; } = new();
 }

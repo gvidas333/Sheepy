@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using server.DTOs.ShoppingList;
 using Server.Mappers;
 using Server.Models;
@@ -11,24 +12,28 @@ public class ShoppingListService : IShoppingListService
     private readonly IProductRepository _productRepository;
     private readonly IMealRepository _mealRepository;
     private readonly IShoppingListRepository _shoppingListRepository;
+    private readonly UserManager<ApplicationUser> _userManager;
 
     public ShoppingListService(IProductRepository productRepository, IMealRepository mealRepository,
-        IShoppingListRepository shoppingListRepository)
+        IShoppingListRepository shoppingListRepository, UserManager<ApplicationUser> userManager)
     {
         _productRepository = productRepository;
         _mealRepository = mealRepository;
         _shoppingListRepository = shoppingListRepository;
+        _userManager = userManager;
     }
 
     public async Task<ShoppingListDto> GenerateAsync(GenerateShoppingListDto dto, Guid userId)
     {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        
         var aggregatedProducts = await AggregateProducts(dto, userId);
 
         var shoppingList = CreateNewShoppingList(dto.ListName, userId, aggregatedProducts);
 
         await _shoppingListRepository.AddAsync(shoppingList);
 
-        return shoppingList.ToDto();
+        return shoppingList.ToDto(user?.CategoryOrder);
     }
 
     private async Task<Dictionary<Guid, (Product product, double quantity)>> AggregateProducts(GenerateShoppingListDto dto, Guid userId)
@@ -130,8 +135,10 @@ public class ShoppingListService : IShoppingListService
 
     public async Task<ShoppingListDto?> GetLatestForUserAsync(Guid userId)
     {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        
         var shoppingList = await _shoppingListRepository.GetLatestForUserAsync(userId);
-        return shoppingList?.ToDto();
+        return shoppingList?.ToDto(user?.CategoryOrder);
     }
 
     public async Task<bool> DeleteAsync(Guid id, Guid userId)

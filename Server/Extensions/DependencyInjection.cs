@@ -74,6 +74,7 @@ public static class DependencyInjection
         services.AddScoped<IMealService, MealService>();
         services.AddScoped<IShoppingListService, ShoppingListService>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IUserService, UserService>();
 
         return services;
     }
