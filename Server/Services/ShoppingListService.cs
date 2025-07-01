@@ -28,8 +28,8 @@ public class ShoppingListService : IShoppingListService
         var user = await _userManager.FindByIdAsync(userId.ToString());
         
         var aggregatedProducts = await AggregateProducts(dto, userId);
-
-        var shoppingList = CreateNewShoppingList(dto.ListName, userId, aggregatedProducts);
+        var mealNames = await GetMealNamesAsync(dto.MealIds, userId);
+        var shoppingList = CreateNewShoppingList(dto.ListName, userId, aggregatedProducts, mealNames);
 
         await _shoppingListRepository.AddAsync(shoppingList);
 
@@ -95,15 +95,22 @@ public class ShoppingListService : IShoppingListService
             }
         }
     }
+    
+    private async Task<List<string>> GetMealNamesAsync(List<Guid> mealIds, Guid userId)
+    {
+        var selectedMeals = await _mealRepository.GetByIdsAsync(mealIds, userId);
+        return selectedMeals.Select(m => m.Name).ToList();
+    }
 
     private ShoppingList CreateNewShoppingList(string name, Guid userId,
-        Dictionary<Guid, (Product product, double quantity)> aggregatedProducts)
+        Dictionary<Guid, (Product product, double quantity)> aggregatedProducts, List<string> mealNames)
     {
         var shoppingList = new ShoppingList
         {
             Name = name,
             UserId = userId,
             CreatedAt = DateTime.UtcNow,
+            MealNames = mealNames,
             ShoppingListItems = new List<ShoppingListItem>()
         };
 

@@ -12,6 +12,7 @@ public static class ShoppingListMapper
             Id = shoppingList.Id,
             Name = shoppingList.Name,
             CreatedAt = shoppingList.CreatedAt,
+            MealNames = shoppingList.MealNames,
             Items = MapShoppingListItemsToDto(shoppingList.ShoppingListItems, categoryOrder)
         };
     }

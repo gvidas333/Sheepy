@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Server.Models;
@@ -26,5 +27,10 @@ public class ShoppingListEntityConfiguration : IEntityTypeConfiguration<Shopping
             .HasForeignKey(s => s.ShoppingListId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.Property(sl => sl.MealNames)
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null))
+            .HasColumnType("jsonb");
     }
 }
