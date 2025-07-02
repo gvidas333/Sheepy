@@ -49,7 +49,6 @@ async function handleAddCategory() {
   }
   try {
     await categoriesStore.addCategory({ name: newCategoryName.value });
-    toast.add({ severity: 'success', summary: 'Success', detail: 'Category created!', life: 3000 });
     isDialogVisible.value = false;
     newCategoryName.value = '';
   } catch (error) {
@@ -69,7 +68,6 @@ function confirmDelete(category: Category) {
     accept: async () => {
       try {
         await categoriesStore.deleteCategory(category.id);
-        toast.add({ severity: 'success', summary: 'Success', detail: 'Category deleted!', life: 3000 });
       } catch (error) {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete category.', life: 3000 });
       }

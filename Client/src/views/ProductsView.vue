@@ -46,16 +46,6 @@
     categoriesStore.fetchCategories();
   });
 
-  const colorPalette = ['#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e', '#14b8a6', '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef'];
-  function getCategoryColor(categoryName: string): string {
-    let hash = 0;
-    for (let i = 0; i < categoryName.length; i++) {
-      hash = categoryName.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const index = Math.abs(hash % colorPalette.length);
-    return colorPalette[index];
-  }
-
   async function handleAddProduct() {
     if (!newProductName.value || !selectedCategoryId.value) {
       toast.add({ severity: 'warn', summary: 'Warning', detail: 'Product name and category are required.', life: 3000 });
@@ -111,7 +101,6 @@
 
       <div v-for="(productsInCat, categoryName) in productsStore.productsByCategory" :key="categoryName" class="category-group">
         <h2 class="category-header">
-          <span class="color-dot" :style="{ backgroundColor: getCategoryColor(categoryName as string) }"></span>
           {{ categoryName }}
         </h2>
         <div class="products-grid">
