@@ -34,6 +34,13 @@ public class MealRepository : IMealRepository
             .Where(m => m.UserId == userId)
             .ToListAsync();
     }
+    
+    public async Task<IEnumerable<Meal>> GetByIdsAsync(List<Guid> mealIds, Guid userId)
+    {
+        return await _context.Meals
+            .Where(m => m.UserId == userId && mealIds.Contains(m.Id))
+            .ToListAsync();
+    }
 
     public async Task UpdateAsync(Meal meal)
     {

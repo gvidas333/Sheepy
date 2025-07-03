@@ -32,7 +32,7 @@ public class ShoppingListsController : ControllerBase
         var userId = GetCurrentUserId();
         var newList = await _shoppingListService.GenerateAsync(generateDto, userId);
 
-        return CreatedAtAction(nameof(GetShoppingList), new { id = newList.Id }, newList);
+        return CreatedAtAction(nameof(GetShoppingList), new { id = newList.List.Id }, newList);
     }
 
     [HttpGet("{id}")]
