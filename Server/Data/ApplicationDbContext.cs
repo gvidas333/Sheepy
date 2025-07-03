@@ -30,5 +30,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         builder.ApplyConfiguration(new ProductEntityConfiguration());
         builder.ApplyConfiguration(new ShoppingListEntityConfiguration());
         builder.ApplyConfiguration(new ShoppingListItemEntityConfiguration());
+        builder.ApplyConfiguration(new ApplicationUserEntityConfiguration());
     }
 }

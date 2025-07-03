@@ -96,7 +96,6 @@ async function handleSaveMeal() {
       };
 
       await mealsStore.updateMeal(mealId.value, updatePayload);
-      toast.add({ severity: 'success', summary: 'Success', detail: 'Meal updated!', life: 3000 });
     } else {
       const addPayload = {
         name: name.value,
@@ -105,7 +104,6 @@ async function handleSaveMeal() {
       };
 
       await mealsStore.addMeal(addPayload);
-      toast.add({ severity: 'success', summary: 'Success', detail: 'Meal added!', life: 3000 });
     }
     router.push('/meals');
   } catch (error) {

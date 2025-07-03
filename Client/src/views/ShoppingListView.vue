@@ -5,6 +5,7 @@ import { useShoppingListStore, type ShoppingListItem } from '@/stores/shoppingLi
 import { useAuthStore } from '@/stores/auth';
 import Button from 'primevue/button';
 import Menu from 'primevue/menu';
+import draggable from 'vuedraggable';
 
 const shoppingListStore = useShoppingListStore();
 const router = useRouter();
@@ -27,13 +28,16 @@ const formattedDate = computed(() => {
 });
 
 onMounted(() => {
-  if (!shoppingListStore.currentList) {
-    shoppingListStore.fetchMostRecentList();
-  }
+  shoppingListStore.fetchMostRecentList();
 });
 
 function toggleMainMenu(event: Event) { mainMenu.value.toggle(event); }
 function handleLogout() { authStore.clearToken(); router.push('/login'); }
+
+function onDragEnd() {
+  const newOrder = shoppingListStore.categoryOrder;
+  shoppingListStore.updateCategoryOrder(newOrder);
+}
 </script>
 
 <template>
@@ -49,23 +53,41 @@ function handleLogout() { authStore.clearToken(); router.push('/login'); }
     </header>
 
     <main class="meals-content">
-      <div v-if="shoppingListStore.currentList" class="list-info">
-        <span>Created on: {{ formattedDate }}</span>
+      <div v-if="shoppingListStore.isLoading" class="loading-message">
+        <p>Loading your list...</p>
       </div>
 
-      <div v-if="shoppingListStore.currentList && Object.keys(shoppingListStore.itemsGroupedByCategory).length > 0">
-        <div v-for="(items, categoryName) in shoppingListStore.itemsGroupedByCategory" :key="categoryName" class="category-group">
-          <h2 class="category-header">{{ categoryName }}</h2>
-          <div class="list-item"
-               v-for="item in items"
-               :key="item.productId"
-               @click="shoppingListStore.toggleItemCompleted(item)"
-               :class="{ 'completed': item.isChecked }"
-          >
-            <span>{{ item.productName }}</span>
-            <strong>{{ item.quantity }}</strong>
+      <div v-else-if="shoppingListStore.currentList && shoppingListStore.orderedCategoryGroups.length > 0">
+
+        <div class="list-info">
+          <span>Created on: {{ formattedDate }}</span>
+          <div v-if="shoppingListStore.currentList.mealNames.length" class="meal-names">
+            <strong>Meals:</strong> {{ shoppingListStore.currentList.mealNames.join(', ') }}
           </div>
         </div>
+
+        <draggable
+          v-model="shoppingListStore.categoryOrder"
+          item-key="name"
+          handle=".category-header"
+          @end="onDragEnd"
+        >
+          <template #item="{ element: categoryName }">
+            <div v-if="shoppingListStore.itemsGroupedByCategory[categoryName]?.length" class="category-group">
+              <h2 class="category-header">{{ categoryName }}</h2>
+              <div
+                class="list-item"
+                v-for="item in shoppingListStore.itemsGroupedByCategory[categoryName]"
+                :key="item.productId"
+                @click="shoppingListStore.toggleItemCompleted(item)"
+                :class="{ 'completed': item.isChecked }"
+              >
+                <span>{{ item.productName }}</span>
+                <strong>{{ item.quantity }}</strong>
+              </div>
+            </div>
+          </template>
+        </draggable>
       </div>
 
       <div v-else class="empty-message">
@@ -111,5 +133,19 @@ function handleLogout() { authStore.clearToken(); router.push('/login'); }
   color: #aaa;
   font-style: italic;
 }
+.category-header {
+  cursor: move;
+}
 
+.meal-names {
+  margin-top: 0.5rem;
+  color: #bbb;
+}
+
+.loading-message {
+  text-align: center;
+  color: #888;
+  margin-top: 4rem;
+  font-style: italic;
+}
 </style>

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using server.DTOs.ShoppingList;
 using Server.Mappers;
 using Server.Models;
@@ -11,24 +12,36 @@ public class ShoppingListService : IShoppingListService
     private readonly IProductRepository _productRepository;
     private readonly IMealRepository _mealRepository;
     private readonly IShoppingListRepository _shoppingListRepository;
+    private readonly UserManager<ApplicationUser> _userManager;
 
     public ShoppingListService(IProductRepository productRepository, IMealRepository mealRepository,
-        IShoppingListRepository shoppingListRepository)
+        IShoppingListRepository shoppingListRepository, UserManager<ApplicationUser> userManager)
     {
         _productRepository = productRepository;
         _mealRepository = mealRepository;
         _shoppingListRepository = shoppingListRepository;
+        _userManager = userManager;
     }
 
-    public async Task<ShoppingListDto> GenerateAsync(GenerateShoppingListDto dto, Guid userId)
+    public async Task<ShoppingListResponseDto> GenerateAsync(GenerateShoppingListDto dto, Guid userId)
     {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
         var aggregatedProducts = await AggregateProducts(dto, userId);
-
-        var shoppingList = CreateNewShoppingList(dto.ListName, userId, aggregatedProducts);
+        var mealNames = await GetMealNamesAsync(dto.MealIds, userId);
+        var shoppingList = CreateNewShoppingList(dto.ListName, userId, aggregatedProducts, mealNames);
 
         await _shoppingListRepository.AddAsync(shoppingList);
 
-        return shoppingList.ToDto();
+        var finalCategoryOrder = await ReconcileCategoryOrderAsync(shoppingList, user);
+
+        var finalShoppingList = await _shoppingListRepository.GetByIdAsync(shoppingList.Id, userId);
+        var listDto = finalShoppingList.ToDto(finalCategoryOrder);
+
+        return new ShoppingListResponseDto
+        {
+            List = listDto,
+            CategoryOrder = finalCategoryOrder 
+        };
     }
 
     private async Task<Dictionary<Guid, (Product product, double quantity)>> AggregateProducts(GenerateShoppingListDto dto, Guid userId)
@@ -90,15 +103,22 @@ public class ShoppingListService : IShoppingListService
             }
         }
     }
+    
+    private async Task<List<string>> GetMealNamesAsync(List<Guid> mealIds, Guid userId)
+    {
+        var selectedMeals = await _mealRepository.GetByIdsAsync(mealIds, userId);
+        return selectedMeals.Select(m => m.Name).ToList();
+    }
 
     private ShoppingList CreateNewShoppingList(string name, Guid userId,
-        Dictionary<Guid, (Product product, double quantity)> aggregatedProducts)
+        Dictionary<Guid, (Product product, double quantity)> aggregatedProducts, List<string> mealNames)
     {
         var shoppingList = new ShoppingList
         {
             Name = name,
             UserId = userId,
             CreatedAt = DateTime.UtcNow,
+            MealNames = mealNames,
             ShoppingListItems = new List<ShoppingListItem>()
         };
 
@@ -112,6 +132,28 @@ public class ShoppingListService : IShoppingListService
             });
         }
         return shoppingList;
+    }
+    
+    private async Task<List<string>> ReconcileCategoryOrderAsync(ShoppingList shoppingList, ApplicationUser user)
+    {
+        var listWithIncludes = await _shoppingListRepository.GetByIdAsync(shoppingList.Id, user.Id);
+    
+        var userCategoryOrder = user.CategoryOrder ?? new List<string>();
+
+        var categoriesInList = listWithIncludes.ShoppingListItems
+            .Select(item => item.Product.CategoryType.Name)
+            .Distinct()
+            .ToList();
+
+        var newCategories = categoriesInList.Except(userCategoryOrder).ToList();
+
+        if (newCategories.Any())
+        {
+            userCategoryOrder.AddRange(newCategories);
+            await _userManager.UpdateAsync(user);
+        }
+
+        return userCategoryOrder;
     }
 
     public async Task<ShoppingListDto> GetByIdAsync(Guid id, Guid userId)
@@ -128,10 +170,16 @@ public class ShoppingListService : IShoppingListService
         return shoppingLists.ToDto();
     }
 
-    public async Task<ShoppingListDto?> GetLatestForUserAsync(Guid userId)
+    public async Task<ShoppingListResponseDto?> GetLatestForUserAsync(Guid userId)
     {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
         var shoppingList = await _shoppingListRepository.GetLatestForUserAsync(userId);
-        return shoppingList?.ToDto();
+
+        return new ShoppingListResponseDto
+        {
+            List = shoppingList?.ToDto(user?.CategoryOrder),
+            CategoryOrder = user?.CategoryOrder ?? new List<string>()
+        };
     }
 
     public async Task<bool> DeleteAsync(Guid id, Guid userId)

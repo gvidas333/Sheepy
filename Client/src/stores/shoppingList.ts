@@ -15,7 +15,13 @@ export interface ShoppingList {
   id: string;
   name: string;
   createdAt: string;
+  mealNames: string[];
   items: ShoppingListItem[];
+}
+
+export interface ShoppingListResponse {
+  list: ShoppingList;
+  categoryOrder: string[];
 }
 
 export type GroupedShoppingList = Record<string, ShoppingListItem[]>;
@@ -28,6 +34,8 @@ export const useShoppingListStore = defineStore('shoppingList', () => {
   const selectedProductIds = ref<string[]>([]);
   const hasSelection = computed(() => selectedMealIds.value.length > 0 || selectedProductIds.value.length > 0);
   const currentList = ref<ShoppingList | null>(null);
+  const categoryOrder = ref<string[]>([]);
+  const isLoading = ref(false);
 
   const itemsGroupedByCategory = computed(() => {
     if (!currentList.value) return {};
@@ -46,13 +54,34 @@ export const useShoppingListStore = defineStore('shoppingList', () => {
     return grouped;
   });
 
+  const orderedCategoryGroups = computed(() => {
+    if (!categoryOrder.value || !Object.keys(itemsGroupedByCategory.value).length) {
+      return [];
+    }
+    return categoryOrder.value.map(categoryName => ({
+      name: categoryName,
+      items: itemsGroupedByCategory.value[categoryName] || []
+    })).filter(group => group.items.length > 0);
+  });
+
   async function fetchMostRecentList() {
+    isLoading.value = true;
     try {
-      const response = await apiClient.get<GroupedShoppingList>(`${API_ENDPOINT}/latest`);
-      currentList.value = response.data || {};
+      const response = await apiClient.get<ShoppingListResponse>(`${API_ENDPOINT}/latest`);
+
+      if (response.data) {
+        currentList.value = response.data.list;
+        categoryOrder.value = response.data.categoryOrder;
+      } else {
+        currentList.value = null;
+        categoryOrder.value = [];
+      }
     } catch (error) {
       console.error('Failed to fetch shopping list:', error);
       currentList.value = null;
+      categoryOrder.value = [];
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -78,12 +107,17 @@ export const useShoppingListStore = defineStore('shoppingList', () => {
     if (!hasSelection.value) return;
 
     try {
-      const response = await apiClient.post(`${API_ENDPOINT}/generate`, {
+      const response = await apiClient.post<ShoppingListResponse>(`${API_ENDPOINT}/generate`, {
         mealIds: selectedMealIds.value,
         productIds: selectedProductIds.value,
         listName: 'New Shopping List'
       });
-      currentList.value = response.data || null;
+
+      if (response.data) {
+        currentList.value = response.data.list;
+        categoryOrder.value = response.data.categoryOrder;
+      }
+
       selectedMealIds.value = [];
       selectedProductIds.value = [];
 
@@ -102,16 +136,29 @@ export const useShoppingListStore = defineStore('shoppingList', () => {
     }
   }
 
+  async function updateCategoryOrder(newOrder: string[]) {
+    try {
+      categoryOrder.value = newOrder;
+      await apiClient.put('/users/category-order', { categoryOrder: newOrder });
+    } catch (error) {
+      console.error('Failed to update category order:', error);
+    }
+  }
+
   return {
+    isLoading,
     currentList,
     selectedMealIds,
     selectedProductIds,
     hasSelection,
     itemsGroupedByCategory,
+    categoryOrder,
+    orderedCategoryGroups,
     fetchMostRecentList,
     toggleMealSelection,
     toggleProductSelection,
     generateList,
-    toggleItemCompleted
+    toggleItemCompleted,
+    updateCategoryOrder
   };
 });
