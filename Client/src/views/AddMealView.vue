@@ -63,7 +63,7 @@ function addProductToList() {
 
   mealProducts.value.push({
     productId: selectedProduct.value.id,
-    name: selectedProduct.value.name,
+    productName: selectedProduct.value.name,
     quantity: quantity.value
   });
 
@@ -150,7 +150,7 @@ async function handleSaveMeal() {
           <div class="product-list">
             <div v-if="!mealProducts.length" class="empty-message">No products added yet.</div>
             <div v-for="(item, index) in mealProducts" :key="item.productId" class="product-list-item">
-              <span>{{ item.name }} - <strong>{{ item.quantity }}</strong></span>
+              <span>{{ item.productName }} - <strong>{{ item.quantity }}</strong></span>
               <Button icon="pi pi-times" @click="removeProduct(index)" text rounded severity="danger" type="button" />
             </div>
           </div>

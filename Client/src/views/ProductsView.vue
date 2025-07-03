@@ -34,7 +34,7 @@
   function handleLogout() { authStore.clearToken(); router.push('/login'); }
 
   async function handleGenerateList() {
-    await shoppingListStore.generateList([], selectedProductIds.value);
+    await shoppingListStore.generateList();
   }
 
   const isDialogVisible = ref(false);
@@ -54,7 +54,7 @@
     try {
       await productsStore.addProduct({
         name: newProductName.value,
-        categoryTypeId: selectedCategoryId.value
+        categoryId: selectedCategoryId.value
       });
       isDialogVisible.value = false;
       newProductName.value = '';
