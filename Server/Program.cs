@@ -27,9 +27,8 @@ else
 }
 
 app.UseHttpsRedirection();
-app.UseRouting();
-
 app.UseCors("AllowAll");
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
