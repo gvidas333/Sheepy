@@ -6,6 +6,7 @@
   import AuthLayout from '@/layouts/AuthLayout.vue';
   import Button from 'primevue/button';
   import InputText from 'primevue/inputtext';
+  import apiClient from '@/services/api';
 
   const email = ref('');
   const password = ref('');
@@ -15,7 +16,7 @@
   async function handleRegister()
   {
     try {
-      await axios.post('https://localhost:7021/api/auth/register', {
+      await apiClient.post('/auth/register', {
         email: email.value,
         password: password.value
       });

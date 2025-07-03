@@ -7,6 +7,7 @@
   import AuthLayout from '@/layouts/AuthLayout.vue';
   import Button from 'primevue/button';
   import InputText from 'primevue/inputtext';
+  import apiClient from '@/services/api';
 
 
   const email = ref('');
@@ -17,7 +18,7 @@
 
   async function handleLogin(){
     try {
-      const response = await axios.post('https://localhost:7021/api/auth/login', {
+      const response = await apiClient.post('/auth/login', {
         email: email.value,
         password: password.value
       });
