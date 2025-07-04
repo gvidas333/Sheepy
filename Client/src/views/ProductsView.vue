@@ -54,7 +54,7 @@
     try {
       await productsStore.addProduct({
         name: newProductName.value,
-        categoryId: selectedCategoryId.value
+        categoryTypeId: selectedCategoryId.value
       });
       isDialogVisible.value = false;
       newProductName.value = '';

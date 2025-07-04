@@ -12,7 +12,7 @@ export interface Product {
 
 export interface NewProductPayload {
   name: string;
-  categoryId: string;
+  categoryTypeId: string;
 }
 
 export const useProductsStore = defineStore('products', () => {
