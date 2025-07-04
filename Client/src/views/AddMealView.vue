@@ -166,7 +166,7 @@ async function handleSaveMeal() {
 .add-meal-layout {
   max-width: 800px;
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 1rem;
 }
 .add-meal-header {
   display: flex;

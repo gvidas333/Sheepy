@@ -99,7 +99,7 @@ function onDragEnd() {
 </template>
 
 <style scoped>
-.meals-layout { max-width: 1000px; margin: 0 auto; padding: 1.5rem; }
+.meals-layout { max-width: 1000px; margin: 0 auto; padding: 1rem; }
 .meals-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; margin-bottom: 2rem; border-bottom: 1px solid #444; }
 .header-left { display: flex; align-items: center; }
 .page-title { color: white; font-size: 1.75rem; margin: 0; }
