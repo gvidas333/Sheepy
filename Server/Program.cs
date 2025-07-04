@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using Server.Data;
 using Server.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +16,12 @@ if (!string.IsNullOrEmpty(port))
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -26,8 +34,7 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
-app.UseCors("AllowAll");
+app.UseCors("ProductionPolicy");
 app.UseRouting();
 
 app.UseAuthentication();

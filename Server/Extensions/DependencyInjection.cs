@@ -50,16 +50,27 @@ public static class DependencyInjection
         
         services.AddCors(options =>
         {
-            options.AddPolicy("AllowAll", policy =>
+            options.AddPolicy("ProductionPolicy", policy =>
             {
-                policy.AllowAnyOrigin()
+                policy.WithOrigins("https://sheepy-8e8f9fda21b5.herokuapp.com")
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             });
         });
         
-        var connectionString = configuration.GetConnectionString("DefaultConnection") ??
+        string connectionString;
+        var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+    
+        if (!string.IsNullOrEmpty(databaseUrl))
+        {
+            connectionString = HerokuDatabaseSetup.GetHerokuConnectionString();
+        }
+        else
+        {
+            connectionString = configuration.GetConnectionString("DefaultConnection") ??
                                throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+        }
+    
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(connectionString));
         services.AddDatabaseDeveloperPageExceptionFilter();
@@ -101,7 +112,7 @@ public static class DependencyInjection
             .AddJwtBearer(options =>
             {
                 options.SaveToken = true;
-                options.RequireHttpsMetadata = false; // In production, set this to true
+                options.RequireHttpsMetadata = false; 
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
