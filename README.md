@@ -1,6 +1,7 @@
 # My Meal Planner
 
-This is a web application designed to help users to plan their shopping trips and shop faster. This project was built to demonstrate full-stack development skills using ASP.NET Core and a modern database solution.
+This is a web application designed to help users to plan their shopping trips and shop faster. 
+URL: https://sheepy-8e8f9fda21b5.herokuapp.com
 
 ## Technology Stack
 
