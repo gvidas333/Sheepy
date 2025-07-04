@@ -16,6 +16,10 @@ public class ProductService : IProductService
 
     public async Task<ProductDto> AddProductAsync(ProductCreateDto productCreateDto, Guid userId)
     {
+        Console.WriteLine("--- ADD PRODUCT DEBUG ---");
+        Console.WriteLine($"Attempting to save product for UserId: {userId}");
+        Console.WriteLine($"Using CategoryId from DTO: {productCreateDto.CategoryTypeId}");
+        Console.WriteLine("-----------------------");
         var product = productCreateDto.ToEntity();
         product.UserId = userId;
         await _productRepository.AddAsync(product);
